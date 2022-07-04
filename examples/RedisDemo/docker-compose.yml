@@ -1,0 +1,6 @@
+  redis_test:
+    container_name: redis_test
+    image: redis:6.0
+    ports:
+      - "12345:6379"
+    command: redis-server --requirepass 123456
