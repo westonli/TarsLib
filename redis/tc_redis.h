@@ -312,7 +312,7 @@ public:
         {
             context = new shared_ptr<RedisRsp>();
             *context = std::make_shared<RedisRsp>();
-            in.setContextData(context, [](TC_NetWorkBuffer*nb){ shared_ptr<RedisRsp> *p = (shared_ptr<RedisRsp>*)(nb->getContextData()); if(!p) { nb->setContextData(NULL); delete p; }});
+            in.setContextData(context, [](TC_NetWorkBuffer*nb){ shared_ptr<RedisRsp> *p = (shared_ptr<RedisRsp>*)(nb->getContextData()); if(p) { nb->setContextData(NULL); delete p; }});
         }
 
         if((*context)->incrementDecode(in))
@@ -1855,10 +1855,10 @@ private:
     {
         int iRet = -1;
 
-        shared_ptr<RedisReq> req = std::make_shared<RedisReq>();
+        shared_ptr<TC_CustomProtoReq> req = std::make_shared<RedisReq>();
         req->sendBuffer(sCommand);
 
-        shared_ptr<RedisRsp> rsp = std::make_shared<RedisRsp>();
+        shared_ptr<TC_CustomProtoRsp> rsp = std::make_shared<RedisRsp>();
         common_protocol_call("redis", req, rsp);
 
         string sBuffer = rsp->getBuffer();
@@ -1997,9 +1997,9 @@ private:
     {
         int iRet = -1;
 
-        shared_ptr<RedisReq> req = std::make_shared<RedisReq>();
+        shared_ptr<TC_CustomProtoReq> req = std::make_shared<RedisReq>();
         req->sendBuffer(sCommand);
-        shared_ptr<RedisRsp> rsp = std::make_shared<RedisRsp>();
+        shared_ptr<TC_CustomProtoRsp> rsp = std::make_shared<RedisRsp>();
         
         common_protocol_call("redis", req, rsp);
 

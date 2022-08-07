@@ -23,6 +23,7 @@ public:
 
 	void test_redis_set();
 
+	void test_async_redis_get();
 private:
 	int _second;
 	bool _bTerminate;

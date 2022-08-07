@@ -64,10 +64,43 @@ RedisThread::RedisThread(int second):_second(second), _bTerminate(false)
     _redisPrx->tars_set_protocol(prot, 3);
 }
 
+void buildCommand(const vector<string>& vPart, string& sCommand)
+{
+	stringstream ss;
+	ss << "*" << vPart.size() << "\r\n";
+
+	for (size_t i = 0; i < vPart.size(); i++)
+	{
+		ss << "$" << vPart[i].size() << "\r\n" << vPart[i] << "\r\n";
+	}
+
+	sCommand = ss.str();
+}
+
+void RedisThread::test_async_redis_get()
+{
+	shared_ptr<TC_CustomProtoReq> req = std::make_shared<RedisReq>();
+	string sCommand;
+	vector<string> vPart;
+
+	vPart.push_back("GET");
+	vPart.push_back("aaa1");
+
+	buildCommand(vPart, sCommand);
+
+	LOG_CONSOLE_DEBUG << "sCommand:" << sCommand << endl;
+
+	req->sendBuffer(sCommand);
+
+	RedisCallBackPtr ptr = new RedisCallBack();
+
+	_redisPrx->common_protocol_call_async("redis", req, ptr);
+}
+
 void RedisThread::test_redis_set()
 {	
 	string sKey = "aaa1";
-	string sValue(1000000, 'c');
+	string sValue(100, 'c');
 
 	int iRet = _redisPrx->set(sKey, sValue);
 	LOG_CONSOLE_DEBUG << "iRet:" << iRet << " sKey:" << sKey << " sValue size:" << sValue.size() << endl;
@@ -109,6 +142,8 @@ void RedisThread::run(void)
 		{
 			try
 			{
+				// test_async_redis_get();
+
 				test_redis_prx();
 
 				test_redis_get_prx();
